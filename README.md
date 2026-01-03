@@ -1,26 +1,26 @@
 # Exam System
 
-Hệ thống quản lý thi cử được xây dựng bằng Go, sử dụng Gin framework và GORM ORM.
+An examination management system built with Go, using Gin framework and GORM ORM.
 
-## Công nghệ sử dụng
+## Technologies
 
 - **Language**: Go 1.25.1
 - **Web Framework**: Gin
 - **ORM**: GORM
 - **Database**: MySQL
 
-## Cấu trúc dự án
+## Project Structure
 
 ```
 exam_system/
 ├── api/                    # API specifications
 ├── cmd/
-│   └── server/            # Entry point của ứng dụng
+│   └── server/            # Application entry point
 │       └── main.go
-├── config/                # Cấu hình database và các thiết lập khác
+├── config/                # Database configuration and settings
 │   └── database.go
-├── internal/              # Mã nguồn nội bộ
-│   ├── app/              # Khởi tạo ứng dụng
+├── internal/              # Internal source code
+│   ├── app/              # Application initialization
 │   │   └── app.go
 │   ├── dto/              # Data Transfer Objects
 │   │   └── exam_response.go
@@ -43,12 +43,12 @@ exam_system/
 └── README.md
 ```
 
-## Yêu cầu
+## Requirements
 
-- Go 1.25.1 hoặc cao hơn
+- Go 1.25.1 or higher
 - MySQL
 
-## Cài đặt
+## Installation
 
 1. Clone repository:
 ```bash
@@ -56,12 +56,12 @@ git clone <repository-url>
 cd exam_system
 ```
 
-2. Cài đặt dependencies:
+2. Install dependencies:
 ```bash
 go mod download
 ```
 
-3. Tạo file `.env` và cấu hình database:
+3. Create `.env` file and configure database:
 ```env
 DB_HOST=localhost
 DB_PORT=3306
@@ -70,15 +70,15 @@ DB_PASSWORD=your_password
 DB_NAME=exam_system
 ```
 
-4. Chạy migration (nếu có)
+4. Run migrations (if any)
 
-## Chạy ứng dụng
+## Running the Application
 
 ```bash
 go run cmd/server/main.go
 ```
 
-Server sẽ chạy tại `http://localhost:8080`
+Server will run at `http://localhost:8080`
 
 ## Build
 
@@ -88,22 +88,22 @@ go build -o server cmd/server/main.go
 
 ## API Endpoints
 
-(Thêm thông tin về các API endpoints của bạn ở đây)
+(Add information about your API endpoints here)
 
-## Kiến trúc
+## Architecture
 
-Dự án sử dụng kiến trúc phân lớp (Layered Architecture):
+The project uses Layered Architecture:
 
-- **Handler Layer**: Xử lý HTTP requests/responses
-- **Service Layer**: Chứa business logic
-- **Repository Layer**: Truy cập database
-- **Model Layer**: Định nghĩa cấu trúc dữ liệu
+- **Handler Layer**: Handles HTTP requests/responses
+- **Service Layer**: Contains business logic
+- **Repository Layer**: Database access
+- **Model Layer**: Defines data structures
 
 ## License
 
 All rights reserved
 
-## Tác giả
+## Author
 
 - **Name**: Nguyễn Phúc Thịnh
 - **Email**: npt911@gmail.com

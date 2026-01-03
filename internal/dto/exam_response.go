@@ -1,6 +1,5 @@
 package dto
 
-// 1. Mapping: interface Examination
 type ExamResponse struct {
 	ID            string `json:"id"`
 	Title         string `json:"title"`
@@ -9,28 +8,19 @@ type ExamResponse struct {
 	QuestionCount int    `json:"questionCount"`
 }
 
-// 2. Mapping: interface SelectionInfo
 type SelectionResponse struct {
-	ID   string `json:"id"` // Go dùng string cho ID uuid
+	ID   string `json:"id"`
 	Name string `json:"name"`
 	Code string `json:"code"`
 }
 
-// 3. Mapping: interface ReadingPassage
-type PassageResponse struct {
-	ID          string `json:"id"`
-	Description string `json:"description,omitempty"` // omitempty: nếu rỗng thì không trả về field này
-	Text        string `json:"text"`
-}
-
-// 4. Mapping: interface Question
 type QuestionResponse struct {
 	ID               string              `json:"id"`
-	Type             string              `json:"type"` // QuestionType bên TS là string hoặc enum
+	Type             string              `json:"type"`
 	Description      string              `json:"description"`
 	MaxText          int                 `json:"maxText,omitempty"`
-	ReadingPassageID *string             `json:"readingPassageId,omitempty"` // Dùng con trỏ để có thể null
-	Selections       []SelectionResponse `json:"selections,omitempty"`       // Nhúng mảng Selection vào đây
+	ReadingPassageID *string             `json:"readingPassageId,omitempty"`
+	Selections       []SelectionResponse `json:"selections,omitempty"`
 }
 
 type ExamDetailResponse struct {
