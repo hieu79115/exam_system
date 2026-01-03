@@ -4,9 +4,16 @@ import (
 	"exam-system/internal/app"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "exam-system/docs" // Import generated docs
 )
 
 func SetupRoutes(r *gin.Engine, h *app.AppHandlers) {
+	// Swagger documentation
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	api := r.Group("/api/v1")
 	{
 		// exam Routes

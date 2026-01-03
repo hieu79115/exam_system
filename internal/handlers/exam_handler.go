@@ -16,7 +16,16 @@ func NewExamHandler(s service.ExamService) *ExamHandler {
 	return &ExamHandler{service: s}
 }
 
-// GET /examinations/:id
+// GetDetail godoc
+// @Summary      Get examination by ID
+// @Description  Get detailed information about a specific examination
+// @Tags         examinations
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Examination ID"
+// @Success      200  {object}  dto.ExamResponse
+// @Failure      404  {object}  map[string]string
+// @Router       /examinations/{id} [get]
 func (h *ExamHandler) GetDetail(c *gin.Context) {
 	id := c.Param("id")
 
@@ -37,7 +46,15 @@ func (h *ExamHandler) GetDetail(c *gin.Context) {
 	c.JSON(http.StatusOK, respone)
 }
 
-// GET /examinations
+// GetList godoc
+// @Summary      List examinations
+// @Description  Get list of all examinations
+// @Tags         examinations
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   dto.ExamListItemResponse
+// @Failure      500  {object}  map[string]string
+// @Router       /examinations [get]
 func (h *ExamHandler) GetList(c *gin.Context) {
 	exams, err := h.service.GetExamList()
 	if err != nil {
@@ -47,7 +64,17 @@ func (h *ExamHandler) GetList(c *gin.Context) {
 	c.JSON(http.StatusOK, exams)
 }
 
-// POST /examinations
+// Create godoc
+// @Summary      Create examination
+// @Description  Create a new examination
+// @Tags         examinations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.CreateExamRequest  true  "Exam creation request"
+// @Success      201      {object}  dto.ExamResponse
+// @Failure      400      {object}  map[string]string
+// @Failure      500      {object}  map[string]string
+// @Router       /examinations [post]
 func (h *ExamHandler) Create(c *gin.Context) {
 	var req dto.CreateExamRequest
 
@@ -66,7 +93,18 @@ func (h *ExamHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, createExam)
 }
 
-// PUT /examinations/:id
+// Update godoc
+// @Summary      Update examination
+// @Description  Update an existing examination by ID
+// @Tags         examinations
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string                  true  "Examination ID"
+// @Param        request  body      dto.UpdateExamRequest  true  "Exam update request"
+// @Success      200      {object}  dto.ExamResponse
+// @Failure      400      {object}  map[string]string
+// @Failure      500      {object}  map[string]string
+// @Router       /examinations/{id} [put]
 func (h *ExamHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 
@@ -87,7 +125,16 @@ func (h *ExamHandler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedExam)
 }
 
-// DELETE /examinations/:id
+// Delete godoc
+// @Summary      Delete examination
+// @Description  Delete an examination by ID
+// @Tags         examinations
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Examination ID"
+// @Success      200  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /examinations/{id} [delete]
 func (h *ExamHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.service.DeleteExam(id); err != nil {

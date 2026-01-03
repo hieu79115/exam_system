@@ -16,7 +16,17 @@ func NewQuestionHandler(s service.QuestionService) *QuestionHandler {
 	return &QuestionHandler{service: s}
 }
 
-// POST /questions
+// Create godoc
+// @Summary      Create question
+// @Description  Create a new question for an examination
+// @Tags         questions
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.CreateQuestionRequest  true  "Question creation request"
+// @Success      201      {object}  dto.QuestionRes
+// @Failure      400      {object}  map[string]string
+// @Failure      500      {object}  map[string]string
+// @Router       /questions [post]
 func (h *QuestionHandler) Create(c *gin.Context) {
 	var req dto.CreateQuestionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -32,7 +42,17 @@ func (h *QuestionHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
-// GET /questions?examId=...
+// GetList godoc
+// @Summary      List questions by exam
+// @Description  Get list of questions for a specific examination
+// @Tags         questions
+// @Accept       json
+// @Produce      json
+// @Param        examId  query     string  true  "Examination ID"
+// @Success      200     {array}   dto.QuestionRes
+// @Failure      400     {object}  map[string]string
+// @Failure      500     {object}  map[string]string
+// @Router       /questions [get]
 func (h *QuestionHandler) GetList(c *gin.Context) {
 	examID := c.Query("examId")
 	if examID == "" {
@@ -48,7 +68,16 @@ func (h *QuestionHandler) GetList(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// GET /questions/:id
+// GetDetail godoc
+// @Summary      Get question by ID
+// @Description  Get detailed information about a specific question
+// @Tags         questions
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Question ID"
+// @Success      200  {object}  dto.QuestionRes
+// @Failure      404  {object}  map[string]string
+// @Router       /questions/{id} [get]
 func (h *QuestionHandler) GetDetail(c *gin.Context) {
 	id := c.Param("id")
 	res, err := h.service.GetDetail(id)
@@ -59,7 +88,18 @@ func (h *QuestionHandler) GetDetail(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// PUT /questions/:id
+// Update godoc
+// @Summary      Update question
+// @Description  Update an existing question by ID
+// @Tags         questions
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string                      true  "Question ID"
+// @Param        request  body      dto.UpdateQuestionRequest  true  "Question update request"
+// @Success      200      {object}  dto.QuestionRes
+// @Failure      400      {object}  map[string]string
+// @Failure      500      {object}  map[string]string
+// @Router       /questions/{id} [put]
 func (h *QuestionHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 	var req dto.UpdateQuestionRequest
@@ -76,7 +116,16 @@ func (h *QuestionHandler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// DELETE /questions/:id
+// Delete godoc
+// @Summary      Delete question
+// @Description  Delete a question by ID
+// @Tags         questions
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Question ID"
+// @Success      200  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /questions/{id} [delete]
 func (h *QuestionHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.service.DeleteQuestion(id); err != nil {

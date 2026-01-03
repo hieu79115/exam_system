@@ -1,0 +1,636 @@
+basePath: /api/v1
+definitions:
+  dto.CreateExamRequest:
+    properties:
+      description:
+        type: string
+      duration:
+        minimum: 1
+        type: integer
+      id:
+        type: string
+      title:
+        type: string
+    required:
+    - duration
+    - id
+    - title
+    type: object
+  dto.CreatePassageRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      text:
+        type: string
+    required:
+    - text
+    type: object
+  dto.CreateQuestionRequest:
+    properties:
+      description:
+        type: string
+      examinationId:
+        type: string
+      maxText:
+        type: integer
+      readingPassageId:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/dto.CreateSelectionReq'
+        type: array
+      type:
+        type: string
+    required:
+    - description
+    - examinationId
+    - type
+    type: object
+  dto.CreateSelectionReq:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.ExamListItemResponse:
+    properties:
+      duration:
+        type: integer
+      id:
+        type: string
+      questionCount:
+        type: integer
+      title:
+        type: string
+    type: object
+  dto.ExamResponse:
+    properties:
+      description:
+        type: string
+      duration:
+        type: integer
+      id:
+        type: string
+      questionCount:
+        type: integer
+      title:
+        type: string
+    type: object
+  dto.PassageResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      text:
+        type: string
+    type: object
+  dto.QuestionRes:
+    properties:
+      description:
+        type: string
+      examinationId:
+        type: string
+      id:
+        type: string
+      readingPassageId:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/dto.SelectionRes'
+        type: array
+      type:
+        type: string
+    type: object
+  dto.SelectionRes:
+    properties:
+      code:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.UpdateExamRequest:
+    properties:
+      description:
+        type: string
+      duration:
+        minimum: 1
+        type: integer
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  dto.UpdatePassageRequest:
+    properties:
+      description:
+        type: string
+      text:
+        type: string
+    required:
+    - text
+    type: object
+  dto.UpdateQuestionRequest:
+    properties:
+      description:
+        type: string
+      examinationId:
+        type: string
+      maxText:
+        type: integer
+      readingPassageId:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/dto.CreateSelectionReq'
+        type: array
+      type:
+        type: string
+    required:
+    - description
+    - examinationId
+    - type
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: npt911@gmail.com
+    name: API Support
+  description: API for managing examinations, questions, and reading passages
+  license:
+    name: All rights reserved
+  termsOfService: http://swagger.io/terms/
+  title: Exam System API
+  version: "1.0"
+paths:
+  /examinations:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all examinations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ExamListItemResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List examinations
+      tags:
+      - examinations
+    post:
+      consumes:
+      - application/json
+      description: Create a new examination
+      parameters:
+      - description: Exam creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateExamRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ExamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create examination
+      tags:
+      - examinations
+  /examinations/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an examination by ID
+      parameters:
+      - description: Examination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete examination
+      tags:
+      - examinations
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific examination
+      parameters:
+      - description: Examination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ExamResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get examination by ID
+      tags:
+      - examinations
+    put:
+      consumes:
+      - application/json
+      description: Update an existing examination by ID
+      parameters:
+      - description: Examination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Exam update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateExamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ExamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update examination
+      tags:
+      - examinations
+  /passages:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all reading passages
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PassageResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List reading passages
+      tags:
+      - passages
+    post:
+      consumes:
+      - application/json
+      description: Create a new reading passage
+      parameters:
+      - description: Passage creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePassageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.PassageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create reading passage
+      tags:
+      - passages
+  /passages/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a reading passage by ID
+      parameters:
+      - description: Passage ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete passage
+      tags:
+      - passages
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific reading passage
+      parameters:
+      - description: Passage ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PassageResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get passage by ID
+      tags:
+      - passages
+    put:
+      consumes:
+      - application/json
+      description: Update an existing reading passage by ID
+      parameters:
+      - description: Passage ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Passage update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePassageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PassageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update passage
+      tags:
+      - passages
+  /questions:
+    get:
+      consumes:
+      - application/json
+      description: Get list of questions for a specific examination
+      parameters:
+      - description: Examination ID
+        in: query
+        name: examId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.QuestionRes'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List questions by exam
+      tags:
+      - questions
+    post:
+      consumes:
+      - application/json
+      description: Create a new question for an examination
+      parameters:
+      - description: Question creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateQuestionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.QuestionRes'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create question
+      tags:
+      - questions
+  /questions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a question by ID
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete question
+      tags:
+      - questions
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific question
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.QuestionRes'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get question by ID
+      tags:
+      - questions
+    put:
+      consumes:
+      - application/json
+      description: Update an existing question by ID
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Question update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateQuestionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.QuestionRes'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update question
+      tags:
+      - questions
+schemes:
+- http
+- https
+swagger: "2.0"

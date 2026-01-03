@@ -80,6 +80,28 @@ go run cmd/server/main.go
 
 Server will run at `http://localhost:8080`
 
+### API Documentation
+
+Once the server is running, you can access the Swagger UI documentation at:
+
+```
+http://localhost:8080/swagger/index.html
+```
+
+The API documentation provides:
+- Interactive API testing interface
+- Complete endpoint descriptions
+- Request/response schemas
+- Example requests
+
+### Regenerate Swagger Documentation
+
+After modifying API endpoints or adding new handlers, regenerate the Swagger docs:
+
+```bash
+swag init -g cmd/server/main.go
+```
+
 ## Build
 
 ```bash
@@ -88,7 +110,30 @@ go build -o server cmd/server/main.go
 
 ## API Endpoints
 
-(Add information about your API endpoints here)
+The API is organized into three main resource groups:
+
+### Examinations
+- `GET /api/v1/examinations` - List all examinations
+- `GET /api/v1/examinations/:id` - Get examination details
+- `POST /api/v1/examinations` - Create new examination
+- `PUT /api/v1/examinations/:id` - Update examination
+- `DELETE /api/v1/examinations/:id` - Delete examination
+
+### Questions
+- `GET /api/v1/questions?examId={id}` - List questions by exam
+- `GET /api/v1/questions/:id` - Get question details
+- `POST /api/v1/questions` - Create new question
+- `PUT /api/v1/questions/:id` - Update question
+- `DELETE /api/v1/questions/:id` - Delete question
+
+### Reading Passages
+- `GET /api/v1/passages` - List all reading passages
+- `GET /api/v1/passages/:id` - Get passage details
+- `POST /api/v1/passages` - Create new passage
+- `PUT /api/v1/passages/:id` - Update passage
+- `DELETE /api/v1/passages/:id` - Delete passage
+
+For detailed API documentation with request/response schemas, visit the Swagger UI at `/swagger/index.html`
 
 ## Architecture
 
