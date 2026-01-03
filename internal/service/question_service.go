@@ -17,11 +17,12 @@ type QuestionService interface {
 }
 
 type questionService struct {
-	repo repository.QuestionRepository
+	repo     repository.QuestionRepository
+	examRepo repository.ExamRepository
 }
 
-func NewQuestionService(repo repository.QuestionRepository) QuestionService {
-	return &questionService{repo: repo}
+func NewQuestionService(repo repository.QuestionRepository, examRepo repository.ExamRepository) QuestionService {
+	return &questionService{repo: repo, examRepo: examRepo}
 }
 
 func (s *questionService) CreateQuestion(req dto.CreateQuestionRequest) (*dto.QuestionRes, error) {
@@ -61,6 +62,13 @@ func (s *questionService) CreateQuestion(req dto.CreateQuestionRequest) (*dto.Qu
 		return nil, err
 	}
 
+	// Update question count
+	exam, err := s.examRepo.FindByID(req.ExaminationID)
+	if err == nil {
+		exam.QuestionCount++
+		s.examRepo.Update(exam)
+	}
+
 	return &dto.QuestionRes{
 		ID:               questionModel.ID,
 		ExaminationID:    questionModel.ExaminationID,
@@ -79,11 +87,22 @@ func (s *questionService) GetListByExam(examID string) ([]dto.QuestionRes, error
 
 	var res []dto.QuestionRes
 	for _, q := range questions {
+		var selections []dto.SelectionRes
+		for _, sel := range q.Selections {
+			selections = append(selections, dto.SelectionRes{
+				ID:   sel.ID,
+				Name: sel.Name,
+				Code: sel.Code,
+			})
+		}
+
 		res = append(res, dto.QuestionRes{
-			ID:            q.ID,
-			ExaminationID: q.ExaminationID,
-			Type:          q.QuestionType,
-			Description:   q.Description,
+			ID:               q.ID,
+			ExaminationID:    q.ExaminationID,
+			ReadingPassageID: q.ReadingPassageID,
+			Type:             q.QuestionType,
+			Description:      q.Description,
+			Selections:       selections,
 		})
 	}
 	if res == nil {
@@ -101,7 +120,9 @@ func (s *questionService) GetDetail(id string) (*dto.QuestionRes, error) {
 	var selRes []dto.SelectionRes
 	for _, sel := range q.Selections {
 		selRes = append(selRes, dto.SelectionRes{
-			ID: sel.ID, Name: sel.Name, Code: sel.Code,
+			ID:   sel.ID,
+			Name: sel.Name,
+			Code: sel.Code,
 		})
 	}
 
@@ -161,5 +182,22 @@ func (s *questionService) UpdateQuestion(id string, req dto.UpdateQuestionReques
 }
 
 func (s *questionService) DeleteQuestion(id string) error {
-	return s.repo.Delete(id)
+	// Get question to find exam ID before deleting
+	q, err := s.repo.FindByID(id)
+	if err != nil {
+		return err
+	}
+
+	if err := s.repo.Delete(id); err != nil {
+		return err
+	}
+
+	// Update question count
+	exam, err := s.examRepo.FindByID(q.ExaminationID)
+	if err == nil && exam.QuestionCount > 0 {
+		exam.QuestionCount--
+		s.examRepo.Update(exam)
+	}
+
+	return nil
 }

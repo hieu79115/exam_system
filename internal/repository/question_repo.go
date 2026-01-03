@@ -28,7 +28,7 @@ func (r *questionRepo) Create(q *models.Question) error {
 
 func (r *questionRepo) FindAll(examID string) ([]models.Question, error) {
 	var questions []models.Question
-	err := r.db.Where("examination_id = ?", examID).Find(&questions).Error
+	err := r.db.Preload("Selections").Where("examination_id = ?", examID).Find(&questions).Error
 	return questions, err
 }
 

@@ -24,7 +24,7 @@ const docTemplate = `{
     "paths": {
         "/examinations": {
             "get": {
-                "description": "Get list of all examinations",
+                "description": "Get list of all examinations with basic info only (ID, Title, Duration)",
                 "consumes": [
                     "application/json"
                 ],
@@ -57,7 +57,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new examination",
+                "description": "Create a new examination with questions and selections inline",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,7 +70,7 @@ const docTemplate = `{
                 "summary": "Create examination",
                 "parameters": [
                     {
-                        "description": "Exam creation request",
+                        "description": "Exam creation request with questions",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -109,7 +109,7 @@ const docTemplate = `{
         },
         "/examinations/{id}": {
             "get": {
-                "description": "Get detailed information about a specific examination",
+                "description": "Get FULL examination details including questions and selections for taking the exam",
                 "consumes": [
                     "application/json"
                 ],
@@ -133,7 +133,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ExamResponse"
+                            "$ref": "#/definitions/dto.ExamDetailResponse"
                         }
                     },
                     "404": {
@@ -148,7 +148,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update an existing examination by ID",
+                "description": "Update examination basic info only (Title, Description, Duration). Does not modify questions.",
                 "consumes": [
                     "application/json"
                 ],
@@ -158,7 +158,7 @@ const docTemplate = `{
                 "tags": [
                     "examinations"
                 ],
-                "summary": "Update examination",
+                "summary": "Update examination basic info",
                 "parameters": [
                     {
                         "type": "string",
@@ -205,7 +205,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete an examination by ID",
+                "description": "Delete an examination by ID. Questions belonging to this exam will be cascade deleted.",
                 "consumes": [
                     "application/json"
                 ],
@@ -474,7 +474,7 @@ const docTemplate = `{
         },
         "/questions": {
             "get": {
-                "description": "Get list of questions for a specific examination",
+                "description": "Get list of questions for a specific examination (for admin question management)",
                 "consumes": [
                     "application/json"
                 ],
@@ -484,7 +484,7 @@ const docTemplate = `{
                 "tags": [
                     "questions"
                 ],
-                "summary": "List questions by exam",
+                "summary": "List questions by exam (Admin)",
                 "parameters": [
                     {
                         "type": "string",
@@ -525,7 +525,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new question for an examination",
+                "description": "Add a new question with selections to an existing examination",
                 "consumes": [
                     "application/json"
                 ],
@@ -535,7 +535,7 @@ const docTemplate = `{
                 "tags": [
                     "questions"
                 ],
-                "summary": "Create question",
+                "summary": "Add question to existing exam",
                 "parameters": [
                     {
                         "description": "Question creation request",
@@ -577,7 +577,7 @@ const docTemplate = `{
         },
         "/questions/{id}": {
             "get": {
-                "description": "Get detailed information about a specific question",
+                "description": "Get detailed information about a specific question with its selections",
                 "consumes": [
                     "application/json"
                 ],
@@ -616,7 +616,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update an existing question by ID",
+                "description": "Update an existing question. Old selections will be deleted and replaced with new ones.",
                 "consumes": [
                     "application/json"
                 ],
@@ -673,7 +673,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete a question by ID",
+                "description": "Delete a question by ID. Selections will be cascade deleted.",
                 "consumes": [
                     "application/json"
                 ],
@@ -735,6 +735,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CreateQuestionNestedRequest"
+                    }
+                },
                 "title": {
                     "type": "string"
                 }
@@ -753,6 +759,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateQuestionNestedRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "type"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "maxText": {
+                    "type": "integer"
+                },
+                "readingPassageId": {
+                    "type": "string"
+                },
+                "selections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CreateSelectionReq"
+                    }
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -803,6 +836,26 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.ExamDetailResponse": {
+            "type": "object",
+            "properties": {
+                "exam": {
+                    "$ref": "#/definitions/dto.ExamResponse"
+                },
+                "passages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PassageResponse"
+                    }
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.QuestionResponse"
+                    }
+                }
+            }
+        },
         "dto.ExamListItemResponse": {
             "type": "object",
             "properties": {
@@ -811,9 +864,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
-                },
-                "questionCount": {
-                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
@@ -880,7 +930,47 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.QuestionResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "maxText": {
+                    "type": "integer"
+                },
+                "readingPassageId": {
+                    "type": "string"
+                },
+                "selections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.SelectionResponse"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.SelectionRes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SelectionResponse": {
             "type": "object",
             "properties": {
                 "code": {

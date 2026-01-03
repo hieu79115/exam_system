@@ -4,6 +4,8 @@ import (
 	"exam-system/internal/dto"
 	"exam-system/internal/models"
 	"exam-system/internal/repository"
+
+	"github.com/google/uuid"
 )
 
 type ExamService interface {
@@ -35,10 +37,9 @@ func (s *examService) GetExamList() ([]dto.ExamListItemResponse, error) {
 	var response []dto.ExamListItemResponse
 	for _, e := range examsDB {
 		response = append(response, dto.ExamListItemResponse{
-			ID:            e.ID,
-			Title:         e.Title,
-			Duration:      e.Duration,
-			QuestionCount: e.QuestionCount,
+			ID:       e.ID,
+			Title:    e.Title,
+			Duration: e.Duration,
 		})
 	}
 
@@ -50,12 +51,42 @@ func (s *examService) GetExamList() ([]dto.ExamListItemResponse, error) {
 }
 
 func (s *examService) CreateExam(req dto.CreateExamRequest) (*models.Examination, error) {
+	examID := req.ID
+
+	var questionsModel []models.Question
+
+	for _, qReq := range req.Questions {
+		qID := uuid.New().String()
+
+		// ... (Đoạn map Selections giữ nguyên) ...
+		var selectionsModel []models.QuestionSelection
+		for _, selReq := range qReq.Selections {
+			selectionsModel = append(selectionsModel, models.QuestionSelection{
+				ID:         uuid.New().String(),
+				QuestionID: qID,
+				Name:       selReq.Name,
+				Code:       selReq.Code,
+			})
+		}
+
+		questionsModel = append(questionsModel, models.Question{
+			ID:               qID,
+			ExaminationID:    examID,
+			ReadingPassageID: qReq.ReadingPassageID,
+			QuestionType:     qReq.Type,
+			Description:      qReq.Description,
+			MaxTextLength:    qReq.MaxText,
+			Selections:       selectionsModel,
+		})
+	}
+
 	newExam := &models.Examination{
-		ID:            req.ID,
+		ID:            examID,
 		Title:         req.Title,
 		Description:   req.Description,
 		Duration:      req.Duration,
-		QuestionCount: 0,
+		QuestionCount: len(questionsModel),
+		Questions:     questionsModel,
 	}
 
 	if err := s.repo.Create(newExam); err != nil {

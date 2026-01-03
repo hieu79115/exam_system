@@ -17,8 +17,8 @@ func NewQuestionHandler(s service.QuestionService) *QuestionHandler {
 }
 
 // Create godoc
-// @Summary      Create question
-// @Description  Create a new question for an examination
+// @Summary      Add question to existing exam
+// @Description  Add a new question with selections to an existing examination
 // @Tags         questions
 // @Accept       json
 // @Produce      json
@@ -43,8 +43,8 @@ func (h *QuestionHandler) Create(c *gin.Context) {
 }
 
 // GetList godoc
-// @Summary      List questions by exam
-// @Description  Get list of questions for a specific examination
+// @Summary      List questions by exam (Admin)
+// @Description  Get list of questions for a specific examination (for admin question management)
 // @Tags         questions
 // @Accept       json
 // @Produce      json
@@ -70,7 +70,7 @@ func (h *QuestionHandler) GetList(c *gin.Context) {
 
 // GetDetail godoc
 // @Summary      Get question by ID
-// @Description  Get detailed information about a specific question
+// @Description  Get detailed information about a specific question with its selections
 // @Tags         questions
 // @Accept       json
 // @Produce      json
@@ -90,7 +90,7 @@ func (h *QuestionHandler) GetDetail(c *gin.Context) {
 
 // Update godoc
 // @Summary      Update question
-// @Description  Update an existing question by ID
+// @Description  Update an existing question. Old selections will be deleted and replaced with new ones.
 // @Tags         questions
 // @Accept       json
 // @Produce      json
@@ -118,7 +118,7 @@ func (h *QuestionHandler) Update(c *gin.Context) {
 
 // Delete godoc
 // @Summary      Delete question
-// @Description  Delete a question by ID
+// @Description  Delete a question by ID. Selections will be cascade deleted.
 // @Tags         questions
 // @Accept       json
 // @Produce      json

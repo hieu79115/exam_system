@@ -23,7 +23,7 @@ func InitApp(db *gorm.DB) *AppHandlers {
 	// 2. Init Services
 	examService := service.NewExamService(examRepo)
 	passageService := service.NewPassageService(passageRepo)
-	questionService := service.NewQuestionService(questionRepo)
+	questionService := service.NewQuestionService(questionRepo, examRepo)
 
 	// 3. Init Handlers
 	return &AppHandlers{

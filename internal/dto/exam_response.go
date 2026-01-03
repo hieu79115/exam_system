@@ -30,17 +30,17 @@ type ExamDetailResponse struct {
 }
 
 type ExamListItemResponse struct {
-	ID            string `json:"id"`
-	Title         string `json:"title"`
-	Duration      int    `json:"duration"`
-	QuestionCount int    `json:"questionCount"`
+	ID       string `json:"id"`
+	Title    string `json:"title"`
+	Duration int    `json:"duration"`
 }
 
 type CreateExamRequest struct {
-	ID          string `json:"id" binding:"required"`
-	Title       string `json:"title" binding:"required"`
-	Description string `json:"description"`
-	Duration    int    `json:"duration" binding:"required,min=1"`
+	ID          string                        `json:"id" binding:"required"`
+	Title       string                        `json:"title" binding:"required"`
+	Description string                        `json:"description"`
+	Duration    int                           `json:"duration" binding:"required,min=1"`
+	Questions   []CreateQuestionNestedRequest `json:"questions" binding:"dive"`
 }
 
 type UpdateExamRequest struct {

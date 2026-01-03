@@ -113,18 +113,18 @@ go build -o server cmd/server/main.go
 The API is organized into three main resource groups:
 
 ### Examinations
-- `GET /api/v1/examinations` - List all examinations
-- `GET /api/v1/examinations/:id` - Get examination details
-- `POST /api/v1/examinations` - Create new examination
-- `PUT /api/v1/examinations/:id` - Update examination
-- `DELETE /api/v1/examinations/:id` - Delete examination
+- `POST /api/v1/examinations` - Create new examination **with questions and selections inline**
+- `GET /api/v1/examinations` - List all examinations (returns basic info: ID, Title, Duration)
+- `GET /api/v1/examinations/:id` - Get **FULL** examination details (Info + Questions + Selections for taking exam)
+- `PUT /api/v1/examinations/:id` - Update examination basic info only (Title, Description, Duration - **does not modify questions**)
+- `DELETE /api/v1/examinations/:id` - Delete examination (cascade deletes questions)
 
-### Questions
-- `GET /api/v1/questions?examId={id}` - List questions by exam
-- `GET /api/v1/questions/:id` - Get question details
-- `POST /api/v1/questions` - Create new question
-- `PUT /api/v1/questions/:id` - Update question
-- `DELETE /api/v1/questions/:id` - Delete question
+### Questions (For Admin Management)
+- `POST /api/v1/questions` - Add question to existing exam (auto-increments question count)
+- `GET /api/v1/questions?examId={id}` - List questions by exam with selections (for admin)
+- `GET /api/v1/questions/:id` - Get question details with selections
+- `PUT /api/v1/questions/:id` - Update question (deletes old selections, saves new ones)
+- `DELETE /api/v1/questions/:id` - Delete question (cascade deletes selections, auto-decrements question count)
 
 ### Reading Passages
 - `GET /api/v1/passages` - List all reading passages

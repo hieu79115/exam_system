@@ -18,6 +18,14 @@ type CreateQuestionRequest struct {
 	Selections []CreateSelectionReq `json:"selections" binding:"dive"`
 }
 
+type CreateQuestionNestedRequest struct {
+	ReadingPassageID *string              `json:"readingPassageId"`
+	Type             string               `json:"type" binding:"required"`
+	Description      string               `json:"description" binding:"required"`
+	MaxText          int                  `json:"maxText"`
+	Selections       []CreateSelectionReq `json:"selections" binding:"dive"`
+}
+
 type UpdateQuestionRequest struct {
 	ExaminationID    string               `json:"examinationId" binding:"required"`
 	ReadingPassageID *string              `json:"readingPassageId"`

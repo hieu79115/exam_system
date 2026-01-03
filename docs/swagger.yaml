@@ -9,6 +9,10 @@ definitions:
         type: integer
       id:
         type: string
+      questions:
+        items:
+          $ref: '#/definitions/dto.CreateQuestionNestedRequest'
+        type: array
       title:
         type: string
     required:
@@ -26,6 +30,24 @@ definitions:
         type: string
     required:
     - text
+    type: object
+  dto.CreateQuestionNestedRequest:
+    properties:
+      description:
+        type: string
+      maxText:
+        type: integer
+      readingPassageId:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/dto.CreateSelectionReq'
+        type: array
+      type:
+        type: string
+    required:
+    - description
+    - type
     type: object
   dto.CreateQuestionRequest:
     properties:
@@ -58,14 +80,25 @@ definitions:
     - code
     - name
     type: object
+  dto.ExamDetailResponse:
+    properties:
+      exam:
+        $ref: '#/definitions/dto.ExamResponse'
+      passages:
+        items:
+          $ref: '#/definitions/dto.PassageResponse'
+        type: array
+      questions:
+        items:
+          $ref: '#/definitions/dto.QuestionResponse'
+        type: array
+    type: object
   dto.ExamListItemResponse:
     properties:
       duration:
         type: integer
       id:
         type: string
-      questionCount:
-        type: integer
       title:
         type: string
     type: object
@@ -108,7 +141,33 @@ definitions:
       type:
         type: string
     type: object
+  dto.QuestionResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      maxText:
+        type: integer
+      readingPassageId:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/dto.SelectionResponse'
+        type: array
+      type:
+        type: string
+    type: object
   dto.SelectionRes:
+    properties:
+      code:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.SelectionResponse:
     properties:
       code:
         type: string
@@ -175,7 +234,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get list of all examinations
+      description: Get list of all examinations with basic info only (ID, Title, Duration)
       produces:
       - application/json
       responses:
@@ -197,9 +256,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new examination
+      description: Create a new examination with questions and selections inline
       parameters:
-      - description: Exam creation request
+      - description: Exam creation request with questions
         in: body
         name: request
         required: true
@@ -231,7 +290,8 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Delete an examination by ID
+      description: Delete an examination by ID. Questions belonging to this exam will
+        be cascade deleted.
       parameters:
       - description: Examination ID
         in: path
@@ -259,7 +319,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get detailed information about a specific examination
+      description: Get FULL examination details including questions and selections
+        for taking the exam
       parameters:
       - description: Examination ID
         in: path
@@ -272,7 +333,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ExamResponse'
+            $ref: '#/definitions/dto.ExamDetailResponse'
         "404":
           description: Not Found
           schema:
@@ -285,7 +346,8 @@ paths:
     put:
       consumes:
       - application/json
-      description: Update an existing examination by ID
+      description: Update examination basic info only (Title, Description, Duration).
+        Does not modify questions.
       parameters:
       - description: Examination ID
         in: path
@@ -317,7 +379,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Update examination
+      summary: Update examination basic info
       tags:
       - examinations
   /passages:
@@ -473,7 +535,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get list of questions for a specific examination
+      description: Get list of questions for a specific examination (for admin question
+        management)
       parameters:
       - description: Examination ID
         in: query
@@ -501,13 +564,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: List questions by exam
+      summary: List questions by exam (Admin)
       tags:
       - questions
     post:
       consumes:
       - application/json
-      description: Create a new question for an examination
+      description: Add a new question with selections to an existing examination
       parameters:
       - description: Question creation request
         in: body
@@ -534,14 +597,14 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Create question
+      summary: Add question to existing exam
       tags:
       - questions
   /questions/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete a question by ID
+      description: Delete a question by ID. Selections will be cascade deleted.
       parameters:
       - description: Question ID
         in: path
@@ -569,7 +632,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get detailed information about a specific question
+      description: Get detailed information about a specific question with its selections
       parameters:
       - description: Question ID
         in: path
@@ -595,7 +658,8 @@ paths:
     put:
       consumes:
       - application/json
-      description: Update an existing question by ID
+      description: Update an existing question. Old selections will be deleted and
+        replaced with new ones.
       parameters:
       - description: Question ID
         in: path
