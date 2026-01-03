@@ -26,6 +26,14 @@ func SetupRoutes(r *gin.Engine, h *app.AppHandlers) {
 		passages.GET("/:id", h.PassageHandler.GetDetail)
 		passages.PUT("/:id", h.PassageHandler.Update)
 		passages.DELETE("/:id", h.PassageHandler.Delete)
+
+		// Question Routes
+		questions := api.Group("/questions")
+		questions.POST("", h.QuestionHandler.Create)
+		questions.GET("", h.QuestionHandler.GetList)
+		questions.GET("/:id", h.QuestionHandler.GetDetail)
+		questions.PUT("/:id", h.QuestionHandler.Update)
+		questions.DELETE("/:id", h.QuestionHandler.Delete)
 	}
 
 }

@@ -9,22 +9,26 @@ import (
 )
 
 type AppHandlers struct {
-	ExamHandler    *handlers.ExamHandler
-	PassageHandler *handlers.PassageHandler
+	ExamHandler     *handlers.ExamHandler
+	PassageHandler  *handlers.PassageHandler
+	QuestionHandler *handlers.QuestionHandler
 }
 
 func InitApp(db *gorm.DB) *AppHandlers {
 	// 1. Init Repos
 	examRepo := repository.NewExamRepository(db)
 	passageRepo := repository.NewPassageRepository(db)
+	questionRepo := repository.NewQuestionRepository(db)
 
 	// 2. Init Services
 	examService := service.NewExamService(examRepo)
 	passageService := service.NewPassageService(passageRepo)
+	questionService := service.NewQuestionService(questionRepo)
 
 	// 3. Init Handlers
 	return &AppHandlers{
-		ExamHandler:    handlers.NewExamHandler(examService),
-		PassageHandler: handlers.NewPassageHandler(passageService),
+		ExamHandler:     handlers.NewExamHandler(examService),
+		PassageHandler:  handlers.NewPassageHandler(passageService),
+		QuestionHandler: handlers.NewQuestionHandler(questionService),
 	}
 }
